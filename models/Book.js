@@ -6,13 +6,11 @@ const bookSchema = new Schema(
     title: {
       type: String,
       required: true,
-      trim: true,
       maxlength: 255,
     },
     author: {
       type: String,
       required: true,
-      trim: true,
       maxlength: 255,
     },
     publishedDate: {
@@ -21,7 +19,6 @@ const bookSchema = new Schema(
     },
     gender: {
       type: String,
-      trim: true,
       maxlength: 100,
       required: false,
     },

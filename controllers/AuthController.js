@@ -75,7 +75,25 @@ const loginController = async (req, res) => {
   }
 };
 
+const logoutController = async (req, res) => {
+     // Since JWTs are stateless, there's nothing to invalidate on the server side.
+    // We can just respond with a success message.
+    try {
+      res.json({
+        success: true,
+        msg: "Logout successful",
+      });
+    } catch (error) {
+      console.error("Error during logout:", error);
+      res.status(500).json({
+        success: false,
+        info: "Internal Server Error",
+      });
+    }
+  };
+
 module.exports = {
   registerController,
   loginController,
+  logoutController
 };
