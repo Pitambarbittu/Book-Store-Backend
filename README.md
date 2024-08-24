@@ -1,11 +1,12 @@
 ## _Backend BookStore API Documentation_
  
-# Use node index.js to start the Application / Also we can use npm start to start the application but for the deployee purpose I have commented nodemon. So better to use node Index.js
+# Use node index.js to start the Application
 Node.js: Ensure you have Node.js installed, preferably version v20.16.0.
 _node version v20.16.0_
 
 ## Installation
 git clone with HTTPS - https://github.com/Pitambarbittu/try.git
+
 git clone with SSH - git@github.com:Pitambarbittu/try.git
 
 ## Install dependencies
