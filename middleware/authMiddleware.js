@@ -14,8 +14,11 @@ const authMiddleware = async (req, res, next) => {
   }
 
   try {
-    // Check if the token is blacklisted
-    const blacklisted = await BlacklistedToken.findOne({ token });
+    // Verify the token using the secret key from environment variables
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Check if the token is blacklisted for this user
+    const blacklisted = await BlacklistedToken.findOne({ token, userId: decoded.userId });
 
     if (blacklisted) {
       return res.status(401).json({
@@ -23,8 +26,6 @@ const authMiddleware = async (req, res, next) => {
         msg: "Token has been invalidated. Please log in again.",
       });
     }
-    // Verify the token using the secret key from environment variables
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Attach the decoded user information to the request object
     req.user = decoded;

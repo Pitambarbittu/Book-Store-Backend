@@ -90,10 +90,11 @@ const logoutController = async (req, res) => {
     // Verify the token using the secret key from environment variables
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Create a new BlacklistedToken document with the token and its expiry date
+    // Create a new BlacklistedToken document with the token, userId, and its expiry date
     const blacklistedToken = new BlacklistedToken({
       token,
       expiresAt: new Date(decoded.exp * 1000), // Convert seconds to milliseconds
+      userId: decoded.userId,
     });
 
     await blacklistedToken.save();
