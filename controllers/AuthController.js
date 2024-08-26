@@ -15,7 +15,8 @@ const registerController = async (req, res) => {
       });
     }
 
-    const user = new User({ email, password });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ email, password: hashedPassword });
     await user.save();
 
     res.status(201).json({
@@ -41,16 +42,14 @@ const loginController = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      console.log("User not found");
       return res.status(401).json({
         success: false,
         msg: "Invalid email or password",
       });
     }
 
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      console.log("Password mismatch");
       return res.status(401).json({
         success: false,
         msg: "Invalid email or password",

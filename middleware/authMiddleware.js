@@ -16,9 +16,12 @@ const authMiddleware = async (req, res, next) => {
   try {
     // Verify the token using the secret key from environment variables
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+
     // Check if the token is blacklisted for this user
-    const blacklisted = await BlacklistedToken.findOne({ token, userId: decoded.userId });
+    const blacklisted = await BlacklistedToken.findOne({
+      token,
+      userId: decoded.userId,
+    });
 
     if (blacklisted) {
       return res.status(401).json({

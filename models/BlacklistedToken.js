@@ -13,7 +13,7 @@ const blacklistedTokenSchema = new Schema(
     },
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
   },
@@ -22,6 +22,5 @@ const blacklistedTokenSchema = new Schema(
   }
 );
 
-const BlacklistedToken = mongoose.model("BlacklistedToken", blacklistedTokenSchema);
+const BlacklistedToken = mongoose.model( "BlacklistedToken", blacklistedTokenSchema);
 module.exports = BlacklistedToken;
-
