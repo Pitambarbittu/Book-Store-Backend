@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
+const BlacklistedToken = require("../models/BlacklistedToken");
 
-const authMiddleware = (req, res, next) => {
-    // Extracting the token from the "Authorization" header
+const authMiddleware = async (req, res, next) => {
+  // Extracting the token from the "Authorization" header
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
-   // If no token is provided, respond with a 401 Unauthorized status
+  // If no token is provided, respond with a 401 Unauthorized status
   if (!token) {
     return res.status(401).json({
       success: false,
@@ -13,6 +14,15 @@ const authMiddleware = (req, res, next) => {
   }
 
   try {
+    // Check if the token is blacklisted
+    const blacklisted = await BlacklistedToken.findOne({ token });
+
+    if (blacklisted) {
+      return res.status(401).json({
+        success: false,
+        msg: "Token has been invalidated. Please log in again.",
+      });
+    }
     // Verify the token using the secret key from environment variables
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 

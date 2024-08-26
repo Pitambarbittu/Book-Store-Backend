@@ -28,6 +28,10 @@ backendApi.use("/api/v1/auth", authRoutes);
 backendApi.use("/api/v1", bookRoutes);
 backendApi.use("/api/v1", protectedRoutes);
 
+// start cleanup task
+const { cleanupExpiredTokens } = require("./middleware/cleanup");
+cleanupExpiredTokens();
+
 //server
 backendApi.listen(port, () => {
   console.log(`App running on port ${port}...`);

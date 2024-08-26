@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const BlacklistedToken = require("../models/BlacklistedToken");
 
 const registerController = async (req, res) => {
   try {
@@ -76,24 +77,42 @@ const loginController = async (req, res) => {
 };
 
 const logoutController = async (req, res) => {
-     // Since JWTs are stateless, there's nothing to invalidate on the server side.
-    // We can just respond with a success message.
-    try {
-      res.json({
-        success: true,
-        msg: "Logout successful",
-      });
-    } catch (error) {
-      console.error("Error during logout:", error);
-      res.status(500).json({
+  try {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      return res.status(401).json({
         success: false,
-        info: "Internal Server Error",
+        msg: "No token provided",
       });
     }
-  };
+
+    // Verify the token using the secret key from environment variables
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Create a new BlacklistedToken document with the token and its expiry date
+    const blacklistedToken = new BlacklistedToken({
+      token,
+      expiresAt: new Date(decoded.exp * 1000), // Convert seconds to milliseconds
+    });
+
+    await blacklistedToken.save();
+
+    res.json({
+      success: true,
+      msg: "Logout successful",
+    });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({
+      success: false,
+      info: "Internal Server Error",
+    });
+  }
+};
 
 module.exports = {
   registerController,
   loginController,
-  logoutController
+  logoutController,
 };
