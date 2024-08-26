@@ -122,7 +122,7 @@ Description: It will show all the added Book's List.
  
 -----------------------------------------------------------------------------------------------------------------------
 ## Delete Book
-Endpoint: [http://localhost:8080/api/v1/books/:id] \
+Endpoint: [https://bookapp-7mbb.onrender.com/api/v1/books/:id] \
 Method: DELETE \
 Autorization: header as Bearer <token> 
 Description: It will Delete the book by giving the Book id.
