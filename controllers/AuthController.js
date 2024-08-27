@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const BlacklistedToken = require("../models/BlacklistedToken");
 
+
 const registerController = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -15,8 +16,7 @@ const registerController = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ email, password: hashedPassword });
+    const user = new User({ email, password });
     await user.save();
 
     res.status(201).json({
@@ -36,19 +36,27 @@ const registerController = async (req, res) => {
   }
 };
 
+
 const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log("Email during login:", email);
+    console.log("Password during login:", password);
+
     const user = await User.findOne({ email });
     if (!user) {
+      console.log("User not found with email:", email);
       return res.status(401).json({
         success: false,
         msg: "Invalid email or password",
       });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Compare the incoming password with the stored hashed password
+    const isMatch = await user.comparePassword(password);
+    console.log("Password match status:", isMatch);
+
     if (!isMatch) {
       return res.status(401).json({
         success: false,
@@ -74,6 +82,9 @@ const loginController = async (req, res) => {
     });
   }
 };
+
+
+
 
 const logoutController = async (req, res) => {
   try {
